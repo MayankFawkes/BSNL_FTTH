@@ -1,2 +1,2 @@
-# BSNL_FTTH
-BSNL FTTH data useage app
+# BSNL FTTH
+BSNL FTTH data useage app is free to use
