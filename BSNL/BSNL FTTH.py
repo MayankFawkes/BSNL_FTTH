@@ -126,10 +126,10 @@ class frameBOTTOM(tkinter.Frame):
 				# "headers": {"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"}, "data":{"userUsageforAuth":""}},
 				2 : {"link": "https://redirect2.bbportal.bsnl.co.in/portal/fetchUserQuotaPM.do","type":"direct",
 				"headers": {"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"}, "data":{}},
-				3 : {"link": "https://fuptopup.bsnl.co.in/getLocationByIP.do","type":"indirect",
-				"headers": {"User-Agent": "Mozilla"}, "data":{'actionName':'manual'}},
 				4 : {"link": "https://redirect1.bbportal.bsnl.co.in/portal/fetchUserQuotaPM.do","type":"direct",
 				"headers": {"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"}, "data":{}},
+				3 : {"link": "https://fuptopup.bsnl.co.in/getLocationByIP.do","type":"indirect",
+				"headers": {"User-Agent": "Mozilla"}, "data":{'actionName':'manual'}},
 			}
 			if sett:
 				self.logs(f'SETTINGS: {sett}')
