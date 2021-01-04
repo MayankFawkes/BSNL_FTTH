@@ -195,9 +195,17 @@ class frameBOTTOM(tkinter.Frame):
 						data["row"]["serviceName"] = n["serviceName"]
 						data["row"]["download"] = n["downloadOctets"]
 						data["row"]["upload"] = n["uploadOctets"]
-						tup = findall(r"HS-H-UPG-([0-9]+)MB-([0-9]+)G-([0-9]+)MB-GPON-M", n["serviceName"])[0]
-						for k,l,m in zip(tup, ["speed", "total", "afterspeed"],["MBPS","GB","MBPS"]):
-							data["row"][l] = f"{k} {m}"
+						try:
+							tup = findall(r"HS-H-UPG-([0-9]+)MB-([0-9]+)G-([0-9]+)MB-GPON-M", n["serviceName"])[0]
+							for k,l,m in zip(tup, ["speed", "total", "afterspeed"],["MBPS","GB","MBPS"]):
+								data["row"][l] = f"{k} {m}"
+						except:
+							tup = findall(r"HS-H-UPG-([0-9]+.)MB-([0-9]+.?[0-9]*)TB-([0-9]+.?[0-9]*)MB-GPON-M", n["serviceName"])[0]
+							tup = list(map(float, tup))
+							tup[1] = tup[1]*1000
+							for k,l,m in zip(tup, ["speed", "total", "afterspeed"],["MBPS","GB","MBPS"]):
+								data["row"][l] = f"{k} {m}"
+
 				return data
 		return data
 
