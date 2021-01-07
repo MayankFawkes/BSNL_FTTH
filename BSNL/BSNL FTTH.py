@@ -1,6 +1,6 @@
 import tkinter
-from tkinter import TOP, BOTTOM, HORIZONTAL, END
-from tkinter import messagebox, ttk, PhotoImage
+from tkinter import TOP, BOTTOM, HORIZONTAL, END, S, W, E, N
+from tkinter import messagebox, ttk, PhotoImage, simpledialog
 from requests import post, get, packages, Session, exceptions
 from urllib3.exceptions import InsecureRequestWarning
 from time import sleep, time, ctime
@@ -11,21 +11,22 @@ from webbrowser import open as openlink
 import os, tempfile, base64, atexit
 
 __author__ = "Mayank Gupta"
-__version__ = "1.4.0"
+__version__ = "2.0.0"
 
 class main(tkinter.Tk):
 	def __init__(self,*args,**kwargs):
 		super().__init__(*args, **kwargs)
 		self.title(f"BSNL FTTH v{__version__}")
-		self.geometry("650x450")
+		self.geometry("650x520")
 		self.resizable(False, False)
 		nameoficon = self.makeicon()
 		self.iconbitmap(nameoficon.name)
+		self.deleting_list = [nameoficon.name]
 		s = ttk.Style()
 		s.theme_use('clam')
 		s.configure("red.Horizontal.TProgressbar", foreground='red', background='red')
-		self.bind("<Escape>", lambda e: e.widget.quit())
-		self.protocol("WM_DELETE_WINDOW", lambda:self.on_closing(nameoficon))
+		self.bind("<Escape>", lambda e: self.on_closing())
+		self.protocol("WM_DELETE_WINDOW", lambda: self.on_closing())
 
 	def makeicon(self):
 		iconhexdata = b'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'
@@ -35,13 +36,12 @@ class main(tkinter.Tk):
 
 		return iconfile
 	
-	def on_closing(self,iconfile):
-		try:
-			if messagebox.askokcancel("Quit", "Do you want to quit?"):
-				self.destroy()
-				os.remove(iconfile.name)
-		except Exception:
-			pass
+	def on_closing(self):
+		if messagebox.askokcancel("Quit", "Do you want to quit?"):
+			self.destroy()
+			for n in self.deleting_list:
+				os.remove(n)
+
 
 class frameTOP(tkinter.Frame,):
 	def __init__(self,*args,**kwargs):
@@ -117,7 +117,7 @@ class frameBOTTOM(tkinter.Frame):
 		except exceptions.ConnectionError:
 			messagebox.showerror("Connection","Internet not connected")
 
-	def __http(self,need):
+	def __http(self,need, phone=None):
 		packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 		if need == "data":
 			sett = self.settings()
@@ -144,6 +144,11 @@ class frameBOTTOM(tkinter.Frame):
 			link = {"link": "https://raw.githubusercontent.com/MayankFawkes/BSNL_FTTH/master/"
 					"latest.json?flush_cache=True","type":"direct",
 					"headers": {}, "data":{}}
+			return self._http("get", link)
+
+		if need == "bill":
+			link = {"link": f"https://portal.bsnl.in/myBsnlApp/rest/billsummary/svctype/CDR/phoneno/{phone}",
+					"type":"direct", "headers": {}, "data":{}}
 			return self._http("get", link)
 
 	def settings(self,number=None):
@@ -262,6 +267,59 @@ class frameBOTTOM(tkinter.Frame):
 		obj.insert(0,s)
 		obj["state"] = "disable"
 
+	def _get_html(self, artt):
+		html = '<h1>Wait Loading...</h1><form action="https://mybillview.bsnl.co.in/BSNLSelfcare_OntheFlyV1.0.2/selfcare/OntheFly/statement" method="post">'
+		for n, m in artt.items():
+			html+=f'<input type="hidden" name="{n}", value="{m}">'
+		html+='<input style="visibility:hidden;"id="submit" type="submit" value="Get Bill"></form><script>window.document.getElementById("submit").click()</script>'
+		return html
+
+	def _date(self, lst_date):
+		months = {'jan': '01', 'feb': '02', 'mar': '03', 'apr': '04', 'may': '05', 'jun': '06', 'jul': '07', 'aug': '08', 'sep': '09', 'oct': '10', 'nov': '11', 'dec': '12'}
+		date = ""
+		for n in reversed(lst_date):
+			try:date+=months[n.lower()]
+			except:date+=n
+		return date
+
+	def _delete(self,name):
+		sleep(8)
+		os.remove(name)
+
+	def open_bill(self):
+		try:
+			number = int(open("PHONE","r").read())
+		except:
+			number = simpledialog.askstring("Landline Number","Enter Number without 0.")
+			with open("PHONE","w") as file:
+				file.write(f'{number}')
+				file.close()
+		if number:
+			self.logs(f'Number Found: {number}')
+			data, type = self.__http("bill", phone=number)
+			data = data["ROWSET"]["ROW"][0]
+
+			self.logs(f'Original Data: {data}')
+
+			raw = {
+				"StatementIdentifier": "TEST",
+				"SystemIdentifier": "CWSC",
+				"InvoiceNumber": data["INVOICE_NO"],
+				"BillingAccountNumber": data["ACCOUNT_NO"],
+				"SSACode": data["SSA_CODE"],
+				"InvoiceDate": self._date(data["INVOICE_DATE"].split("-")),
+			}
+			self.logs(f'Dict raw data: {raw}')
+			
+			with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as iconfile:
+				iconfile.write(self._get_html(raw).encode())
+
+			openlink(f"{iconfile.name}")
+			self.master.deleting_list.append(iconfile.name)
+			return True
+		messagebox.showinfo("Landline","Landline number not found.")
+
+
 	def widget(self):
 		self.progress = ttk.Progressbar(self,orient=HORIZONTAL, style="red.Horizontal.TProgressbar", length=400, mode='determinate')
 		self.progress.grid(row=0,column=0,columnspan=4,padx=10,pady=(25,2))
@@ -300,13 +358,16 @@ class frameBOTTOM(tkinter.Frame):
 		self.FUP = tkinter.Entry(self, state="disable", disabledforeground="black")
 		self.FUP.grid(row=5,column=3,padx=10,pady=10)
 
-		tkinter.Button(self, text="REFRESH", height=2, width=10, command=lambda: Thread(target=self.refresh).start()).grid(row=6,column=0, padx=10,pady=20)
+		tkinter.Button(self, text="REFRESH", height=2, width=10, command=self.refresh).grid(row=6,column=0, padx=10,pady=20)
 
 		tkinter.Button(self, text="INFO", height=2, width=10, command=INFObox).grid(row=6,column=1, padx=10,pady=20)
 
-		tkinter.Button(self, text="UPDATE", height=2, width=10, command=lambda: Thread(target=self.SoftwareUpdate).start()).grid(row=6,column=2, padx=10,pady=20)
+		tkinter.Button(self, text="UPDATE", height=2, width=10, command=self.SoftwareUpdate).grid(row=6,column=2, padx=10,pady=20)
 
 		tkinter.Label(self, textvariable=self.isupdateaviable).grid(row=6,column=3, padx=10,pady=20)
+
+		tkinter.Button(self, text="OPEN BILL", height=2, width=10, command=self.open_bill).grid(row=7,column=0,columnspan=4,padx=10,pady=(0,20),sticky=S+W+E+N)
+
 
 class reglabel(tkinter.Label):
 	def __init__(self,*args,**kwargs):
