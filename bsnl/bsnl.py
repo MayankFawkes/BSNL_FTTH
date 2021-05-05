@@ -20,7 +20,10 @@ class main(tkinter.Tk):
 		self.geometry("650x520")
 		self.resizable(False, False)
 		nameoficon = self.makeicon()
-		self.iconbitmap(nameoficon.name)
+		try:
+			self.iconbitmap(nameoficon.name)
+		except:
+			pass
 		self.deleting_list = [nameoficon.name]
 		s = ttk.Style()
 		s.theme_use('clam')
@@ -234,7 +237,7 @@ class frameBOTTOM(tkinter.Frame):
 			"afterspeed": self.FUP
 		}
 
-		if data["status"] is not 200:
+		if data["status"] != 200:
 			messagebox.showerror("Error", str(data["msg"]))
 			avia = False
 		
