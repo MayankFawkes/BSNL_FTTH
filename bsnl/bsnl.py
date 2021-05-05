@@ -11,7 +11,7 @@ from webbrowser import open as openlink
 import os, tempfile, base64, atexit
 
 __author__ = "Mayank Gupta"
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 
 class main(tkinter.Tk):
 	def __init__(self,*args,**kwargs):
