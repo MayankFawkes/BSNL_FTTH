@@ -1,0 +1,96 @@
+name: Make release
+
+on:
+  push:
+    tags:
+      - v*
+ 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+
+    - name: PyInstaller Linux amd64
+      id: amd64
+      uses: action-python/pyinstaller-py3.8@amd64
+      with:
+        path: .
+        rename: bsnl-linux-amd64
+        spec: bsnl.spec
+
+    - name: PyInstaller Linux i386
+      id: i386
+      uses: action-python/pyinstaller-py3.8@i386
+      with:
+        path: .
+        rename: bsnl-linux-i386
+        spec: bsnl.spec
+
+    - name: PyInstaller Windows x32
+      id: win32
+      uses: action-python/pyinstaller-py3.8@win32
+      with:
+        path: .
+        rename: bsnl-windows-win32.exe
+        spec: bsnl.spec
+
+    - name: PyInstaller Windows x64
+      id: win64
+      uses: action-python/pyinstaller-py3.8@win64
+      with:
+        path: .
+        rename: bsnl-windows-win64.exe
+        spec: bsnl.spec
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body_path: ./release.md
+        draft: false
+        prerelease: false
+
+    - name: Upload Linux File amd64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          asset_path: ${{ steps.amd64.outputs.location }}
+          asset_name: ${{ steps.amd64.outputs.filename }}
+          asset_content_type: ${{ steps.amd64.outputs.content_type }}
+
+    - name: Upload Linux File i386
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          asset_path: ${{ steps.i386.outputs.location }}
+          asset_name: ${{ steps.i386.outputs.filename }}
+          asset_content_type: ${{ steps.i386.outputs.content_type }}
+
+    - name: Upload Windows File win32
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          asset_path: ${{ steps.win32.outputs.location }}
+          asset_name: ${{ steps.win32.outputs.filename }}
+          asset_content_type: ${{ steps.win32.outputs.content_type }}
+
+    - name: Upload Windows File win64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          asset_path: ${{ steps.win64.outputs.location }}
+          asset_name: ${{ steps.win64.outputs.filename }}
+          asset_content_type: ${{ steps.win64.outputs.content_type }}
