@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(['bsnl/bsnl.py'],
-             pathex=['/media/h0nk3r/CCD604BED604AB32/My/project/bsnl'],
+             pathex=['bsnl'],
              binaries=[],
              datas=[],
              hiddenimports=[],
